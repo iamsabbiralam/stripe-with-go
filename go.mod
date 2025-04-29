@@ -1,4 +1,4 @@
-module github.com/iamsabbiralam/stripe-with-go.git
+module github.com/iamsabbiralam/stripe-with-go
 
 go 1.23.0
 
@@ -24,6 +24,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.26.0 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
+	github.com/iamsabbiralam/stripe-with-go v0.0.0-20250429071954-81cad61ec227 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.5.5 // indirect

@@ -25,9 +25,6 @@ type PaymentController struct {
 	db                *gorm.DB
 }
 
-// NewProductController creates a new instance of ProductController.
-// Parameters:
-// - client: A Postgresql client for database operations.
 func NewPaymentController(db *gorm.DB) *PaymentController {
 	return &PaymentController{
 		paymentRepository: paymentRepositories.NewPaymentRepository(db),

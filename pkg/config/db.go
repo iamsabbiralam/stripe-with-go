@@ -25,24 +25,20 @@ func InitDB() (*gorm.DB, error) {
 	DB_USER := os.Getenv("DB_USER")
 	DB_NAME := os.Getenv("DB_NAME")
 	DB_PASSWORD := os.Getenv("DB_PASSWORD")
-
-	// Create the connection string
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s",
 		DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_PORT,
 	)
-	// dsn := "host=propteq-dev.cluster-c74yw6gco1oh.ap-southeast-2.rds.amazonaws.com user=postgres password=]k(C[tu70Y0_UXrA{$iP2Eyd6|h3 dbname=propteq port=5432"
+
 	DB, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal("Failed to connect to database: ", err)
 		return nil, err
 	}
-	fmt.Println("Connected to the Database")
+
 	return DB, nil
 }
 
 func Migrate(db *gorm.DB) {
-	// Enable the "uuid-ossp" extension
 	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 	err := db.AutoMigrate(
 		&paymentModels.Payment{},
@@ -50,6 +46,7 @@ func Migrate(db *gorm.DB) {
 	if err != nil {
 		log.Fatalf("Migration failed: %v", err)
 	}
+
 	log.Println("Migration completed")
 }
 
@@ -58,5 +55,6 @@ func CloseDB(DB *gorm.DB) {
 	if err != nil {
 		log.Fatal("Failed to get DB from GORM: ", err)
 	}
+
 	db.Close()
 }

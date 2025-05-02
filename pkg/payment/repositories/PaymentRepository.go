@@ -38,7 +38,7 @@ func (pr *PaymentRepository) CreateOne(payment *paymentModels.Payment) error {
 		return err
 	}
 	
-	return pr.newSession(context.Background()).Create(payment).Error
+	return nil
 }
 
 func (pr *PaymentRepository) SearchCustomerOnStripe(ctx context.Context, email string) (string, error) {

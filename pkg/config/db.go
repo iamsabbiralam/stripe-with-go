@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	paymentModels "github.com/iamsabbiralam/stripe-with-go/pkg/payment/models"
+
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
@@ -43,6 +45,7 @@ func Migrate(db *gorm.DB) {
 	// Enable the "uuid-ossp" extension
 	db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 	err := db.AutoMigrate(
+		&paymentModels.Payment{},
 	)
 	if err != nil {
 		log.Fatalf("Migration failed: %v", err)

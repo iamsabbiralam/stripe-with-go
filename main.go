@@ -38,7 +38,7 @@ func main() {
 	}
 	defer config.CloseDB(DB)
 
-	// config.Migrate(DB)
+	config.Migrate(DB)
 	// Root endpoint handling for GET and HEAD
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "server is running..."})

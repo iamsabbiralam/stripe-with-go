@@ -77,7 +77,4 @@ Response
 
 ## 📄 License
 MIT License - feel free to use and contribute!
-```
----
-Would you like me to help you with `.gitignore`, `.env.example`, or a `main.go` setup to make your project even more production-ready?
-```
+

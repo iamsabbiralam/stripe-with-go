@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"time"
 
@@ -13,9 +14,19 @@ import (
 	paymentIntent72 "github.com/stripe/stripe-go/v72/paymentintent"
 	stripe "github.com/stripe/stripe-go/v78"
 
+	"github.com/iamsabbiralam/stripe-with-go/utils"
 	"gorm.io/gorm"
 )
 
+type PaymentService interface {
+	newSession(ctx context.Context) *gorm.DB
+	CreateOne(payment *paymentModels.Payment) error
+	SearchCustomerOnStripe(ctx context.Context, email string) (string, utils.ErrorResponseStruct)
+	ConfirmPaymentIntent(payment, emailId, customerId string) (string, error)
+	GetPaymentMethod(customerId string) (string, error)
+}
+
+//PaymentRepository strcut implemets PaymentService
 type PaymentRepository struct {
 	collection *gorm.DB
 }
@@ -37,14 +48,15 @@ func (pr *PaymentRepository) CreateOne(payment *paymentModels.Payment) error {
 	if err := db.Create(payment).Error; err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
-func (pr *PaymentRepository) SearchCustomerOnStripe(ctx context.Context, email string) (string, error) {
+func (pr *PaymentRepository) SearchCustomerOnStripe(ctx context.Context, email string) (string, utils.ErrorResponseStruct) {
 	striped.Key = os.Getenv("STRIPE_SECRET_KEY")
 	if striped.Key == "" {
-		return "", fmt.Errorf("API key is missing")
+		err := fmt.Errorf("api key is missing")
+		return "", *utils.ErrorResponse(http.StatusInternalServerError, err.Error(), err)
 	}
 
 	params := &striped.CustomerListParams{
@@ -54,14 +66,14 @@ func (pr *PaymentRepository) SearchCustomerOnStripe(ctx context.Context, email s
 	iter := customer.List(params)
 	for iter.Next() {
 		c := iter.Customer()
-		return c.ID, nil
+		return c.ID, utils.ErrorResponseStruct{}
 	}
 
 	if err := iter.Err(); err != nil {
-		return "", err
+		return "", *utils.ErrorResponse(http.StatusInternalServerError, err.Error(), err)
 	}
-
-	return "", fmt.Errorf("Customer not found with email: %s", email)
+	err := fmt.Errorf("customer not found with email: %s", email)
+	return "", *utils.ErrorResponse(http.StatusNotFound, err.Error(), err)
 }
 
 func (pc *PaymentRepository) ConfirmPaymentIntent(paymentIntent, email, customerID string) (string, error) {
@@ -94,7 +106,7 @@ func (pc *PaymentRepository) ConfirmPaymentIntent(paymentIntent, email, customer
 func (pr *PaymentRepository) GetPaymentMethod(customerID string) (string, error) {
 	striped.Key = os.Getenv("STRIPE_SECRET_KEY")
 	if striped.Key == "" {
-		return "", fmt.Errorf("API key is missing")
+		return "", fmt.Errorf("api key is missing")
 	}
 
 	params := &striped.CustomerListPaymentMethodsParams{

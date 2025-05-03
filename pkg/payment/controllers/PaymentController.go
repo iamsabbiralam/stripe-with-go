@@ -19,8 +19,13 @@ import (
 	"gorm.io/gorm"
 )
 
+type PaymentControllers interface{
+	Createproduct(ctx *gin.Context)
+}
+
+// paymentController struct implememts paymentController interface.
 type PaymentController struct {
-	paymentRepository *paymentRepositories.PaymentRepository
+	paymentRepository paymentRepositories.PaymentService
 	validator         *validator.Validate
 	db                *gorm.DB
 }
@@ -52,9 +57,9 @@ func (pc *PaymentController) CreateProduct(ctx *gin.Context) {
 	}
 
 	amountInCents := int64(math.Round(totalAmount * 100))
-	getCustomer, err := pc.paymentRepository.SearchCustomerOnStripe(ctx, email)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	getCustomer, searchErr := pc.paymentRepository.SearchCustomerOnStripe(ctx, email)
+	if searchErr.Message != "" {
+		ctx.JSON(searchErr.Status, gin.H{"error": searchErr.Message})
 		return
 	}
 

@@ -1,6 +1,8 @@
 package config
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
@@ -14,5 +16,5 @@ func InitializeRoutes(router *gin.Engine, db *gorm.DB) {
 }
 
 func pingHandler(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "API is running"})
+	c.JSON(http.StatusOK, gin.H{"message": "API is running"})
 }

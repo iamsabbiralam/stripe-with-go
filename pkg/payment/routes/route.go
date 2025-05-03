@@ -10,7 +10,5 @@ import (
 func PaymentRoutes(router *gin.RouterGroup, db *gorm.DB) {
 	paymentController := paymentControllers.NewPaymentController(db)
 	paymentRoutes := router.Group("/payment")
-	{
-		paymentRoutes.POST("/create", paymentController.CreateProduct)
-	}
+	paymentRoutes.POST("/create", paymentController.CreateProduct)
 }
